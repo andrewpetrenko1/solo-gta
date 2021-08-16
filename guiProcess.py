@@ -31,7 +31,6 @@ class GUIProcess(Process):
     self.set_info()
 
   def set_new_name(self):
-    print(self.var_process_name.get())
     super().__init__(self.var_process_name.get())
     self.set_info()
 
@@ -46,7 +45,8 @@ class GUIProcess(Process):
     Button(text="Kill", command= self.kill_process).grid(row=2, column=0, sticky=W, padx=10, pady=5)
 
     Entry(self.root, textvariable=self.var_process_name).grid(row=1, column=2, sticky=E, padx=10, pady=5)
-    Button(text="Set new process", command= self.set_new_name).grid(row=2, column=2, sticky=E, padx=10, pady=5)
+
+    self.__callback()
 
   def set_info(self):
     if not self.process:
@@ -55,11 +55,15 @@ class GUIProcess(Process):
 
     self.infoVar.set(f"Process: {self.process.name()}\nPid: {self.process.pid}\nStatus: {self.process.status()}")
 
+  def __callback(self):
+    self.set_new_name()
+    self.root.after(2000, self.__callback)
+
 
 def main():
   root = Tk()
   root.title("Process operator")
-  pr = GUIProcess("", root)
+  pr = GUIProcess("gta5.exe", root)
   keyboard.add_hotkey("shift+alt+k", pr.kill_process)
   keyboard.add_hotkey("shift+alt+plus", lambda: pr.pauseTime(10))
   root.mainloop()
